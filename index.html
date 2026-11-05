@@ -58,10 +58,11 @@
             border-color: #4CAF50;
         }
         .result-box {
-            background-color: #1b3320;
+            background-color: #2c2c2c; /* لون رمادي محايد قبل إدخال الأرقام */
             padding: 20px;
             border-radius: 10px;
             margin-top: 30px;
+            transition: 0.3s;
         }
         .result-item {
             margin-bottom: 15px;
@@ -70,11 +71,28 @@
         .result-item:last-child {
             margin-bottom: 0;
         }
+        .win-box {
+            background-color: #1b3320; /* لون أخضر للفوز */
+        }
         .loss-box {
-            background-color: #331b1b;
+            background-color: #331b1b; /* لون أحمر للخسارة */
         }
         .tie-box {
-            background-color: #332d1b;
+            background-color: #332d1b; /* لون أصفر للتعادل */
+        }
+        .credits {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 14px;
+            color: #b3b3b3;
+            line-height: 1.8;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+        .credits a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -97,6 +115,11 @@
             <div class="result-item" id="resultText">النتيجة: --</div>
             <div class="result-item" id="myPoints">نقاطي: 0</div>
             <div class="result-item" id="oppPoints">نقاط خصمي: 0</div>
+        </div>
+
+        <div class="credits">
+            ✦ برمجة وتصميم : <a href="https://t.me/xxFMx" target="_blank">@xxFMx</a><br>
+            ✧ قناة التيليجرام : <a href="https://t.me/TYxxxx" target="_blank">@TYxxxx</a>
         </div>
     </div>
 
@@ -123,18 +146,21 @@
         }
 
         function calculatePK() {
-            let myPop = parseArabic(document.getElementById('myPop').value);
-            let oppPop = parseArabic(document.getElementById('oppPop').value);
-
+            let rawMy = document.getElementById('myPop').value.trim();
+            let rawOpp = document.getElementById('oppPop').value.trim();
             let resultBox = document.getElementById('resultBox');
 
-            if (myPop === 0 && oppPop === 0) {
+            // إذا كانت إحدى الخانتين أو كلاهما فارغة، لا تحسب شيئاً واعرض الحالة الافتراضية
+            if (rawMy === '' || rawOpp === '') {
                 document.getElementById('resultText').innerText = "النتيجة: --";
                 document.getElementById('myPoints').innerText = "نقاطي: 0";
                 document.getElementById('oppPoints').innerText = "نقاط خصمي: 0";
-                resultBox.className = "result-box";
+                resultBox.className = "result-box"; 
                 return;
             }
+
+            let myPop = parseArabic(rawMy);
+            let oppPop = parseArabic(rawOpp);
 
             let myBase = getBasePoints(myPop);
             let oppBase = getBasePoints(oppPop);
@@ -147,7 +173,7 @@
                 resultString = "فوز";
                 myPts = myBase + Math.floor(oppBase / 2);
                 oppPts = Math.floor(oppBase / 2);
-                resultBox.className = "result-box"; 
+                resultBox.className = "result-box win-box"; 
             } else if (myPop < oppPop) {
                 resultString = "خسارة";
                 myPts = Math.floor(myBase / 2);
