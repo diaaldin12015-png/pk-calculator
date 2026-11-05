@@ -73,6 +73,9 @@
         .loss-box {
             background-color: #331b1b;
         }
+        .tie-box {
+            background-color: #332d1b;
+        }
     </style>
 </head>
 <body>
@@ -98,7 +101,6 @@
     </div>
 
     <script>
-        // دالة مخصصة لتحويل الأرقام العربية إلى إنجليزية ليفهمها المتصفح
         function parseArabic(str) {
             if (!str) return 0;
             let engStr = str.replace(/[٠-٩]/g, d => d.charCodeAt(0) - 1632)
@@ -106,14 +108,24 @@
             return parseInt(engStr) || 0;
         }
 
+        function getBasePoints(pop) {
+            if (pop >= 2000000) return 42;
+            if (pop >= 900000) return 40;
+            if (pop >= 500000) return 36;
+            if (pop >= 260000) return 32;
+            if (pop >= 120000) return 28;
+            if (pop >= 50000) return 24;
+            if (pop >= 15000) return 20;
+            if (pop >= 8000) return 16;
+            if (pop >= 5000) return 14;
+            if (pop >= 2500) return 10;
+            return 6;
+        }
+
         function calculatePK() {
             let myPop = parseArabic(document.getElementById('myPop').value);
             let oppPop = parseArabic(document.getElementById('oppPop').value);
 
-            let myPts = 0;
-            let oppPts = 0;
-            let resultString = "--";
-            
             let resultBox = document.getElementById('resultBox');
 
             if (myPop === 0 && oppPop === 0) {
@@ -124,21 +136,28 @@
                 return;
             }
 
+            let myBase = getBasePoints(myPop);
+            let oppBase = getBasePoints(oppPop);
+            
+            let myPts = 0;
+            let oppPts = 0;
+            let resultString = "--";
+
             if (myPop > oppPop) {
-                resultString = "فوز 🏆";
-                myPts = Math.floor(myPop / 10000);
-                oppPts = Math.floor((oppPop / 10000) * 0.7);
+                resultString = "فوز";
+                myPts = myBase + Math.floor(oppBase / 2);
+                oppPts = Math.floor(oppBase / 2);
                 resultBox.className = "result-box"; 
             } else if (myPop < oppPop) {
-                resultString = "خسارة 💔";
-                myPts = Math.floor((myPop / 10000) * 0.7);
-                oppPts = Math.floor(oppPop / 10000);
+                resultString = "خسارة";
+                myPts = Math.floor(myBase / 2);
+                oppPts = oppBase + Math.floor(myBase / 2);
                 resultBox.className = "result-box loss-box"; 
             } else {
-                resultString = "تعادل 🤝";
-                myPts = Math.floor(myPop / 10000);
-                oppPts = Math.floor(oppPop / 10000);
-                resultBox.className = "result-box"; 
+                resultString = "تعادل";
+                myPts = myBase + Math.floor(oppBase / 2);
+                oppPts = Math.floor(oppBase / 2);
+                resultBox.className = "result-box tie-box"; 
             }
 
             document.getElementById('resultText').innerText = "النتيجة: " + resultString;
